@@ -3,7 +3,7 @@
 <head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Demande de stage INP-HB </title>
+    <title>Demande de stage INP-HB</title>
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
@@ -31,148 +31,155 @@
                     <div class="formbold-input-flex">
                         <div>
                             <label for="nomDemandeur" class="formbold-form-label">Nom</label>
-                            <input type="text" name="nomDemandeur" id="nomDemandeur" class="formbold-form-input" />
+                            <input type="text" name="nomDemandeur" id="nomDemandeur" class="formbold-form-input" required/>
                         </div>
                         <div>
                             <label for="prenomsDemandeur" class="formbold-form-label">Prénoms</label>
-                            <input type="text" name="prenomsDemandeur" id="prenomsDemandeur" class="formbold-form-input" />
+                            <input type="text" name="prenomsDemandeur" id="prenomsDemandeur" class="formbold-form-input" required/>
                         </div>
                     </div>
-
+                    
                     <div class="formbold-input-flex">
                         <div>
                             <label for="genre" class="formbold-form-label">Genre</label>
-                            <select name="genre" id="genre" class="formbold-form-input">
-                              <option value="">  </option>
-                              <option value="F"> Féminin </option>
-                              <option value="M"> Masculin </option>
+                            <select name="genre" id="genre" class="formbold-form-input" required>
+                              <option value="">Choisissez...</option>
+                              <option value="F">Féminin</option>
+                              <option value="M">Masculin</option>
                             </select>
                         </div>
                         <div>
                             <label for="emailDemandeur" class="formbold-form-label">Email</label>
-                            <input type="email" name="emailDemandeur" id="emailDemandeur" class="formbold-form-input" />
+                            <input type="email" name="emailDemandeur" id="emailDemandeur" class="formbold-form-input" required/>
                         </div>
                     </div>
 
                     <div class="formbold-input-flex">
                         <div>
                             <label for="dateNaissance" class="formbold-form-label">Date de Naissance</label>
-                            <input type="date" name="dateNaissance" id="dateNaissance" class="formbold-form-input"
-                                placeholder="JJ-MM-AAAA" 
-                                pattern="\d{2}-\d{2}-\d{4}" 
-                                title="Veuillez entrer la date au format JJ-MM-AAAA. Exemple : 01-01-2024." />
+                            <input type="date" name="dateNaissance" id="dateNaissance" class="formbold-form-input" required/>
                         </div>
                         <div>
                             <label for="lieuNaissance" class="formbold-form-label">Lieu de Naissance</label>
-                            <input type="text" name="lieuNaissance" id="lieuNaissance" class="formbold-form-input" />
+                            <input type="text" name="lieuNaissance" id="lieuNaissance" class="formbold-form-input" required />
                         </div>
                     </div>
 
                     <div class="formbold-input-flex">
                         <div>
                             <label for="nationaliteDemandeur" class="formbold-form-label">Nationalité</label>
-                            <input type="text" name="nationaliteDemandeur" id="nationaliteDemandeur" class="formbold-form-input" />
+                            <input type="text" name="nationaliteDemandeur" id="nationaliteDemandeur" class="formbold-form-input" required/>
                         </div>
                         <div>
                           <label for="numeropiece" class="formbold-form-label">Numéro de Pièce</label>
-                          <input type="text" name="numeropiece" id="numeropiece" class="formbold-form-input" />
+                          <input type="text" name="numeropiece" id="numeropiece" class="formbold-form-input" required/>
                         </div>
                     </div>
                 </div>
 
                 <div class="formbold-form-step formbold-form-step-2">
-                  <div class="formbold-input-flex">
-                          <div>
-                              <label for="libelstage" class="formbold-form-label">Type de stage demandé</label>
-                              <select name="libelstage" id="libelstage" class="formbold-form-input" onchange="updateDureeStage()">
-                                <option value="">  </option>
-                                <option value="stage1"> Stage de validation de Diplôme </option>
-                                <option value="stage2"> Stage de Perfectionnement </option>
-                              </select>
-                          </div>
-                          <div>
-                              <label for="dureestage" class="formbold-form-label">Durée du Stage</label>
-                              <select name="dureestage" id="dureestage" class="formbold-form-input">
-                                <option value="">  </option>
-                                <option name="dureestage" value="3">03 mois</option>
-                                <option name="dureestage" value="6">06 mois</option>
-                              </select>
-                          </div>
+                    <div class="formbold-input-flex">
+                        <div>
+                            <label for="idTypestage" class="formbold-form-label">Type de stage demandé</label>
+                            <select name="idTypestage" id="idTypestage" class="formbold-form-input" onchange="updateDureeStage()" required>
+                                <option value="">Choisissez...</option>
+                                <option value="1">Stage de validation de Diplôme</option>
+                                <option value="2">Stage de Perfectionnement</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="dureestage" class="formbold-form-label">Durée du Stage</label>
+                            <select name="dureestage" id="dureestage" class="formbold-form-input" required>
+                                <option value="">Choisissez...</option>
+                                <option value="3">03 mois</option>
+                                <option value="6">06 mois</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="formbold-input-flex">
                         <div>
-                            <label for="debutstage" class="formbold-form-label">Début de Stage</label>
-                            <input type="date" name="debutstage" id="debutstage" class="formbold-form-input" />
+                            <label for="debutstage" class="formbold-form-label">Date à partir de laquelle vous etes disponible </label>
+                            <input type="date" name="debutstage" id="debutstage" class="formbold-form-input" required/>
+                        </div>
+                        <label for="service">Choisir le service :</label>
+                        <select name="idService" id="service">
+                            <?php
+                                $servicesQuery = "SELECT idService, nomService FROM SERVICES";
+                                $servicesResult = $conn->query($servicesQuery);
+                                while ($service = $servicesResult->fetch_assoc()) {
+                                    echo "<option value='" . $service['idService'] . "'>" . $service['nomService'] . "</option>";
+                                }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="formbold-input-flex">
+                        <div>
+                            <label for="telephone" class="formbold-form-label">Téléphone</label>
+                            <input type="tel" name="telephone" id="telephone" class="formbold-form-input" 
+                                pattern="\+225[0-9]{10}" 
+                                placeholder="+2251234567890" 
+                                title="Veuillez entrer un numéro de téléphone valide avec l'indicatif du pays (+225) suivi de 10 chiffres. Exemple : +2251234567890" 
+                                required>
                         </div>
                         <div>
-                            <label for="finstage" class="formbold-form-label">Fin de Stage</label>
-                            <input type="date" name="finstage" id="finstage" class="formbold-form-input" 
-                                placeholder="JJ-MM-AAAA" 
-                                pattern="\d{2}-\d{2}-\d{4}" 
-                                title="Veuillez entrer la date au format JJ-MM-AAAA. Exemple : 01-01-2024." />
+                            <label for="dateDemande" class="formbold-form-label">Date à laquelle vous demandez le stage</label>
+                            <input type="date" name="dateDemande" id="dateDemande" class="formbold-form-input" required/>
                         </div>
-                    </div>
-                        <label for="telephone" class="formbold-form-label">Téléphone</label>
-                        <input type="tel" name="telephone" id="telephone" class="formbold-form-input" 
-                            pattern="\+225[0-9]{10}" 
-                            placeholder="+2251234567890" 
-                            title="Veuillez entrer un numéro de téléphone valide avec l'indicatif du pays (+225) suivi de 10 chiffres. Exemple : +2251234567890" 
-                            required>
-                    <div>
-                        <label for="dateDemande" class="formbold-form-label">Date de Demande</label>
-                        <input type="date" name="dateDemande" id="dateDemande" class="formbold-form-input" 
-                            placeholder="JJ-MM-AAAA" 
-                            pattern="\d{2}-\d{2}-\d{4}" 
-                            title="Veuillez entrer la date au format JJ-MM-AAAA. Exemple : 01-01-2024." />
                     </div>
                 </div>
 
                 <div class="formbold-form-step formbold-form-step-3">
                     <div>
                         <label for="photo" class="formbold-form-label">Photo</label>
-                        <input type="file" name="photo" id="photo" class="formbold-form-input" />
+                        <input type="file" name="photo" id="photo" class="formbold-form-input" accept=".jpg, .jpeg, .png, .pdf" required/>
                     </div>
                     <div>
                         <label for="diplomeDemandeur" class="formbold-form-label">Diplôme</label>
-                        <input type="file" name="diplomeDemandeur" id="diplomeDemandeur" class="formbold-form-input" />
+                        <input type="file" name="diplomeDemandeur" id="diplomeDemandeur" class="formbold-form-input" accept=".jpg, .jpeg, .png, .pdf" required/>
                     </div>
                     <div>
                         <label for="cvDemandeur" class="formbold-form-label">CV</label>
-                        <input type="file" name="cvDemandeur" id="cvDemandeur" class="formbold-form-input" />
+                        <input type="file" name="cvDemandeur" id="cvDemandeur" class="formbold-form-input" accept=".jpg, .jpeg, .png, .pdf" required/>
                     </div>
                     <div>
                         <label for="cniDemandeur" class="formbold-form-label">CNI</label>
-                        <input type="file" name="cniDemandeur" id="cniDemandeur" class="formbold-form-input" />
+                        <input type="file" name="cniDemandeur" id="cniDemandeur" class="formbold-form-input" accept=".jpg, .jpeg, .png, .pdf" required/>
                     </div>
                     <div>
                         <label for="lettreDemandeur" class="formbold-form-label">Lettre de Demande</label>
-                        <input type="file" name="lettreDemandeur" id="lettreDemandeur" class="formbold-form-input" />
+                        <input type="file" name="lettreDemandeur" id="lettreDemandeur" class="formbold-form-input" accept=".jpg, .jpeg, .png, .pdf" required/>
                     </div>
                     <div class="formbold-input-flex">
                         <div>
                             <label for="idSpecialite" class="formbold-form-label">Spécialité</label>
-                            <select name="idSpecialite" id="idSpecialite" class="formbold-form-input">
-                              <option value="">  </option>
-                              <option value="informatique"> Informatique </option>
-                              <option value="agronomie"> Agronomie </option>
-                              <option value="economie"> Economie & Commerce </option>
-                              <option value="mine"> Mines et Géologie </option>
-                              <option value="travaux-publics"> Travaux Publics </option>
+                            <select name="idSpecialite" id="idSpecialite" class="formbold-form-input" required>
+                                <option value="">Choisissez...</option>
+                                <option value="1">Informatique</option>
+                                <option value="2">Agronomie</option>
+                                <option value="3">Economie & Commerce</option>
+                                <option value="4">Mines et Géologie</option>
+                                <option value="5">Travaux Publics</option>
+                                <option value="6">Comptabilité</option>
                             </select>
                         </div>
                         <div>
-                            <label for="idNiveau" class="formbold-form-label"> Votre Niveau</label>
+                            <label for="idNiveau" class="formbold-form-label">Votre Niveau</label>
                             <select name="idNiveau" id="idNiveau" class="formbold-form-input">
-                              <option value="">  </option>
-                              <option value="bts"> BTS </option>
-                              <option value="licence"> LICENCE </option>
-                              <option value="master"> MASTER </option>
+                                <option value="">Choisissez...</option>
+                                <option value="1">BTS</option>
+                                <option value="2">LICENCE</option>
+                                <option value="3">MASTER</option>
                             </select>
                         </div>
                     </div>
                     <div>
                         <label for="idEcole" class="formbold-form-label">École d'origine</label>
-                        <input type="text" name="idEcole" id="idEcole" class="formbold-form-input" />
+                        <select name="idEcole" id="idEcole" class="formbold-form-input">
+                            <option value="">Choisissez...</option>
+                            <option value="1">INP-HB</option>
+                            <option value="2">ESETEC</option>
+                            <option value="3">PIGIER</option>
+                        </select>
                     </div>
                 </div>
 
@@ -185,7 +192,88 @@
         </div>
     </div>
 
-    <script src="index.js"> </script>
+    <script >
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        function showStep(step) {
+            const steps = document.querySelectorAll('.formbold-form-step');
+            const stepMenus = document.querySelectorAll('.formbold-steps li');
+            const submitButton = document.querySelector('.formbold-submit-btn');
+            const nextButton = document.querySelector('.formbold-next-btn');
+
+            steps.forEach((el, index) => {
+                el.classList.toggle('active', index + 1 === step);
+            });
+            stepMenus.forEach((el, index) => {
+                el.classList.toggle('active', index + 1 === step);
+            });
+
+            if (step === totalSteps) {
+                submitButton.style.display = 'inline-block';  // Afficher le bouton Soumettre à la dernière étape
+                nextButton.style.display = 'none';  // Masquer le bouton Suivant à la dernière étape
+            } else {
+                submitButton.style.display = 'none';  // Masquer le bouton Soumettre aux autres étapes
+                nextButton.style.display = 'inline-block';  // Afficher le bouton Suivant sur les autres étapes
+            }
+        }
+
+        function validateStep(step) {
+            const inputs = document.querySelectorAll(`.formbold-form-step-${step} .formbold-form-input`);
+            let valid = true;
+
+            inputs.forEach(input => {
+                if (input.type === 'file') {
+                    // Vérifie si un fichier est sélectionné
+                    if (input.files.length === 0) {
+                        alert('Veuillez télécharger tous les fichiers requis.');
+                        valid = false;
+                    }
+                } else if (!input.value.trim()) {  // Vérifie les champs texte
+                    alert('Veuillez remplir tous les champs.');
+                    valid = false;
+                }
+            });
+
+            return valid;
+        }
+
+        function updateDureeStage() {
+            const typeStage = document.getElementById("idTypestage").value;
+            const dureestageSelect = document.getElementById("dureestage");
+            dureestageSelect.options.length = 0; // Supprimer toutes les options existantes
+
+            if (typeStage === "1") { // Stage de validation de Diplôme
+                dureestageSelect.add(new Option("3 mois", "3"));
+                dureestageSelect.value = "3"; // Définir la valeur par défaut à 3 mois
+            } else if (typeStage === "2") { // Stage de Perfectionnement
+                dureestageSelect.add(new Option("6 mois", "6"));
+                dureestageSelect.value = "6"; // Définir la valeur par défaut à 6 mois
+            }
+        }
+
+        function nextStep() {
+            if (validateStep(currentStep)) {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+
+        // Initialize the first step
+        showStep(currentStep);
+
+        // Update the duration field when the type of stage is selected
+        document.getElementById("idTypestage").addEventListener("change", updateDureeStage);
+    </script>
 
 </body>
 </html>
