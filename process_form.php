@@ -1,4 +1,9 @@
 <?php
+// Afficher les erreurs
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Configuration de la connexion à la base de données
 $servername = "localhost";
 $username = "root";
@@ -24,25 +29,24 @@ function validate_file($file, $allowed_exts, $max_size) {
     $file_size = $file['size'];
     
     if (!in_array($file_ext, $allowed_exts)) {
-        return "Extension non autorisée.";
+        return "Extension non autorisée : " . $file_ext;
     }
     
     if ($file_size > $max_size) {
-        return "Fichier trop volumineux.";
+        return "Fichier trop volumineux : " . $file['name'];
     }
     
     return true;
 }
 
-// Créer un nom de fichier unique en utilisant le nom du demandeur et un identifiant unique
-function create_unique_filename($directory, $filename) {
+// Créer un nom de fichier unique en utilisant l'ID du demandeur
+function create_unique_filename($directory, $idDemandeur, $filename) {
     $file_ext = pathinfo($filename, PATHINFO_EXTENSION);
-    $base_name = pathinfo($filename, PATHINFO_FILENAME);
-    $new_filename = $base_name . '.' . $file_ext;
+    $new_filename = $idDemandeur . '_' . $filename;
     $counter = 1;
 
     while (file_exists($directory . $new_filename)) {
-        $new_filename = $base_name . '_' . $counter . '.' . $file_ext;
+        $new_filename = $idDemandeur . '_' . pathinfo($filename, PATHINFO_FILENAME) . '_' . $counter . '.' . $file_ext;
         $counter++;
     }
 
@@ -60,13 +64,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nationaliteDemandeur = secure_input($_POST['nationaliteDemandeur']);
     $numeropiece = secure_input($_POST['numeropiece']);
     $debutstage = secure_input($_POST['debutstage']);
-    $finstage = secure_input($_POST['finstage']);
+    $dureestage = secure_input($_POST['dureestage']);
     $telephone = secure_input($_POST['telephone']);
     $dateDemande = secure_input($_POST['dateDemande']);
     $idSpecialite = secure_input($_POST['idSpecialite']);
     $idNiveau = secure_input($_POST['idNiveau']);
     $idEcole = secure_input($_POST['idEcole']);
-    $dureestage = isset($_POST['dureestage']) ? secure_input($_POST['dureestage']) : '';
+    $idTypestage = secure_input($_POST['idTypestage']); // Ajout de idTypeStage
 
     // Validation du numéro de téléphone
     if (!preg_match("/^\+225[0-9]{10}$/", $telephone)) {
@@ -77,91 +81,86 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $allowed_exts = ['jpg', 'jpeg', 'png', 'pdf'];
     $max_file_size = 5 * 1024 * 1024; // 5 MB
 
-    $photo = $_FILES['photo'];
-    $diplomeDemandeur = $_FILES['diplomeDemandeur'];
-    $cvDemandeur = $_FILES['cvDemandeur'];
-    $cniDemandeur = $_FILES['cniDemandeur'];
-    $lettreDemandeur = $_FILES['lettreDemandeur'];
+    $files = [
+        'photo' => $_FILES['photo'],
+        'diplomeDemandeur' => $_FILES['diplomeDemandeur'],
+        'cvDemandeur' => $_FILES['cvDemandeur'],
+        'cniDemandeur' => $_FILES['cniDemandeur'],
+        'lettreDemandeur' => $_FILES['lettreDemandeur']
+    ];
 
-    $photo_result = validate_file($photo, $allowed_exts, $max_file_size);
-    $diplome_result = validate_file($diplomeDemandeur, $allowed_exts, $max_file_size);
-    $cv_result = validate_file($cvDemandeur, $allowed_exts, $max_file_size);
-    $cni_result = validate_file($cniDemandeur, $allowed_exts, $max_file_size);
-    $lettre_result = validate_file($lettreDemandeur, $allowed_exts, $max_file_size);
-
-    if ($photo_result !== true || $diplome_result !== true || $cv_result !== true || $cni_result !== true || $lettre_result !== true) {
-        die("Erreur de validation des fichiers : $photo_result $diplome_result $cv_result $cni_result $lettre_result");
-    }
+    $upload_directory = "uploads/";
 
     // Démarrer une transaction
     $conn->begin_transaction();
 
     try {
-        $upload_dir = 'uploads/';
-        
-        // Modifier le nom des fichiers pour inclure le nom du demandeur et le numéro de la pièce
-        $base_filename = $nomDemandeur . '_' . $numeropiece;
-        
-        $photo_filename = $base_filename . '_photo.' . pathinfo($photo['name'], PATHINFO_EXTENSION);
-        $diplome_filename = $base_filename . '_diplome.' . pathinfo($diplomeDemandeur['name'], PATHINFO_EXTENSION);
-        $cv_filename = $base_filename . '_cv.' . pathinfo($cvDemandeur['name'], PATHINFO_EXTENSION);
-        $cni_filename = $base_filename . '_cni.' . pathinfo($cniDemandeur['name'], PATHINFO_EXTENSION);
-        $lettre_filename = $base_filename . '_lettre.' . pathinfo($lettreDemandeur['name'], PATHINFO_EXTENSION);
-
-        // Générer des noms de fichiers uniques
-        $photo_path = $upload_dir . create_unique_filename($upload_dir, $photo_filename);
-        $diplome_path = $upload_dir . create_unique_filename($upload_dir, $diplome_filename);
-        $cv_path = $upload_dir . create_unique_filename($upload_dir, $cv_filename);
-        $cni_path = $upload_dir . create_unique_filename($upload_dir, $cni_filename);
-        $lettre_path = $upload_dir . create_unique_filename($upload_dir, $lettre_filename);
-
-        // Insertion des données dans la base de données
-        $sql = "INSERT INTO DEMANDEURS (nomDemandeur, prenomsDemandeur, genre, emailDemandeur, dateNaissance, lieuNaissance, 
-            nationaliteDemandeur, numeropiece, debutstage, finstage, dureestage, telephone, dateDemande, photo, diplomeDemandeur, 
-            cvDemandeur, cniDemandeur, lettreDemandeur, idSpecialite, idNiveau, idEcole) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param( "sssssssssssssssssssss", 
-            $nomDemandeur, $prenomsDemandeur, $genre, $emailDemandeur, $dateNaissance, $lieuNaissance, $nationaliteDemandeur, 
-            $numeropiece, $debutstage, $finstage, $dureestage, $telephone, $dateDemande, $photo_path, $diplome_path, $cv_path, 
-            $cni_path, $lettre_path, $idSpecialite, $idNiveau, $idEcole );
+        // Insérer les données dans la table DEMANDEURS
+        $stmt = $conn->prepare("INSERT INTO DEMANDEURS (nomDemandeur, prenomsDemandeur, genre, emailDemandeur, dateNaissance, lieuNaissance, nationaliteDemandeur, numeropiece, debutstage, dureestage, telephone, dateDemande, idSpecialite, idNiveau, idEcole, idTypestage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        if ($stmt === false) {
+            throw new Exception("Erreur lors de la préparation de la requête : " . $conn->error);
+        }
+        $stmt->bind_param("ssssssssssssssss", $nomDemandeur, $prenomsDemandeur, $genre, $emailDemandeur, $dateNaissance, $lieuNaissance, $nationaliteDemandeur, $numeropiece, $debutstage, $dureestage, $telephone, $dateDemande, $idSpecialite, $idNiveau, $idEcole, $idTypestage);
 
         if (!$stmt->execute()) {
             throw new Exception("Erreur lors de l'insertion des données : " . $stmt->error);
         }
 
-        // Déplacer les fichiers uploadés vers le répertoire de destination
-        if (!move_uploaded_file($photo['tmp_name'], $photo_path) ||
-            !move_uploaded_file($diplomeDemandeur['tmp_name'], $diplome_path) ||
-            !move_uploaded_file($cvDemandeur['tmp_name'], $cv_path) ||
-            !move_uploaded_file($cniDemandeur['tmp_name'], $cni_path) ||
-            !move_uploaded_file($lettreDemandeur['tmp_name'], $lettre_path)) {
-            throw new Exception("Erreur lors du déplacement des fichiers.");
+        // Obtenir l'ID du demandeur
+        $idDemandeur = $stmt->insert_id;
+
+        // Créer un nom de fichier unique et déplacer les fichiers uploadés
+        $filePaths = [];
+        foreach ($files as $key => $file) {
+            if ($file['error'] === UPLOAD_ERR_OK) {
+                $validation_result = validate_file($file, $allowed_exts, $max_file_size);
+                if ($validation_result !== true) {
+                    throw new Exception("Erreur de validation du fichier " . $key . ": " . $validation_result);
+                }
+
+                // Créer un nom de fichier unique avec l'ID du demandeur
+                $filename = create_unique_filename($upload_directory, $idDemandeur, $file['name']);
+                $filepath = $upload_directory . $filename;
+
+                if (!move_uploaded_file($file['tmp_name'], $filepath)) {
+                    throw new Exception("Erreur lors du téléchargement du fichier " . $key . ".");
+                }
+
+                // Stocker le chemin du fichier pour mise à jour dans la base de données
+                $filePaths[$key] = $filepath; // Enregistrer le chemin complet
+            } else {
+                throw new Exception("Erreur lors du téléchargement du fichier " . $key . ": " . $file['error']);
+            }
         }
 
-        // Valider la transaction
+        // Les chemins des fichiers dans la table DEMANDEURS
+        $stmt_update = $conn->prepare("UPDATE DEMANDEURS SET photo = ?, diplomeDemandeur = ?, cvDemandeur = ?, cniDemandeur = ?, lettreDemandeur = ? WHERE idDEMANDEUR = ?");
+        if ($stmt_update === false) {
+            throw new Exception("Erreur lors de la préparation de la requête de mise à jour : " . $conn->error);
+        }
+        $stmt_update->bind_param("sssssi", $filePaths['photo'], $filePaths['diplomeDemandeur'], $filePaths['cvDemandeur'], $filePaths['cniDemandeur'], $filePaths['lettreDemandeur'], $idDemandeur);
+
+        if (!$stmt_update->execute()) {
+            throw new Exception("Erreur lors de la mise à jour des chemins de fichiers : " . $stmt_update->error);
+        }
+
+        // Commit transaction
         $conn->commit();
-        echo "Données insérées avec succès.";
+        echo "Demande soumise avec succès !";
 
     } catch (Exception $e) {
-        // Annuler la transaction
+        // Rollback transaction en cas d'erreur
         $conn->rollback();
-
-        // Supprimer les fichiers téléchargés en cas d'erreur
-        @unlink($photo_path);
-        @unlink($diplome_path);
-        @unlink($cv_path);
-        @unlink($cni_path);
-        @unlink($lettre_path);
-
-        // Afficher l'erreur
         die("Erreur : " . $e->getMessage());
+    } finally {
+        // Fermeture des ressources
+        if (isset($stmt)) {
+            $stmt->close();
+        }
+        if (isset($stmt_update)) {
+            $stmt_update->close();
+        }
+        $conn->close();
     }
-
-    $stmt->close();
 }
-
-// Fermer la connexion
-$conn->close();
 ?>
