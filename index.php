@@ -101,16 +101,6 @@
                             <label for="debutstage" class="formbold-form-label">Date à partir de laquelle vous etes disponible </label>
                             <input type="date" name="debutstage" id="debutstage" class="formbold-form-input" required/>
                         </div>
-                        <label for="service">Choisir le service :</label>
-                        <select name="idService" id="service">
-                            <?php
-                                $servicesQuery = "SELECT idService, nomService FROM SERVICES";
-                                $servicesResult = $conn->query($servicesQuery);
-                                while ($service = $servicesResult->fetch_assoc()) {
-                                    echo "<option value='" . $service['idService'] . "'>" . $service['nomService'] . "</option>";
-                                }
-                            ?>
-                        </select>
                     </div>
                     <div class="formbold-input-flex">
                         <div>
@@ -197,25 +187,22 @@
         const totalSteps = 3;
 
         function showStep(step) {
-            const steps = document.querySelectorAll('.formbold-form-step');
-            const stepMenus = document.querySelectorAll('.formbold-steps li');
-            const submitButton = document.querySelector('.formbold-submit-btn');
-            const nextButton = document.querySelector('.formbold-next-btn');
+        const steps = document.querySelectorAll('.formbold-form-step');
+        const stepMenus = document.querySelectorAll('.formbold-steps li');
+        const submitButton = document.querySelector('.formbold-submit-btn');
+        const nextButton = document.querySelector('.formbold-next-btn');
+        const backButton = document.querySelector('.formbold-back-btn');
 
-            steps.forEach((el, index) => {
-                el.classList.toggle('active', index + 1 === step);
-            });
-            stepMenus.forEach((el, index) => {
-                el.classList.toggle('active', index + 1 === step);
-            });
+        steps.forEach((el, index) => {
+            el.classList.toggle('active', index + 1 === step);
+        });
+        stepMenus.forEach((el, index) => {
+            el.classList.toggle('active', index + 1 === step);
+        });
 
-            if (step === totalSteps) {
-                submitButton.style.display = 'inline-block';  // Afficher le bouton Soumettre à la dernière étape
-                nextButton.style.display = 'none';  // Masquer le bouton Suivant à la dernière étape
-            } else {
-                submitButton.style.display = 'none';  // Masquer le bouton Soumettre aux autres étapes
-                nextButton.style.display = 'inline-block';  // Afficher le bouton Suivant sur les autres étapes
-            }
+        submitButton.style.display = step === totalSteps ? 'inline-block' : 'none';
+        nextButton.style.display = step === totalSteps ? 'none' : 'inline-block';
+        backButton.style.display = step === 1 ? 'none' : 'inline-block';
         }
 
         function validateStep(step) {
@@ -223,15 +210,16 @@
             let valid = true;
 
             inputs.forEach(input => {
-                if (input.type === 'file') {
-                    // Vérifie si un fichier est sélectionné
-                    if (input.files.length === 0) {
-                        alert('Veuillez télécharger tous les fichiers requis.');
+                if (input.hasAttribute('required')) {
+                    if (input.type === 'file') {
+                        if (input.files.length === 0) {
+                            alert('Veuillez télécharger tous les fichiers requis.');
+                            valid = false;
+                        }
+                    } else if (!input.value.trim()) {
+                        alert('Veuillez remplir tous les champs obligatoires.');
                         valid = false;
                     }
-                } else if (!input.value.trim()) {  // Vérifie les champs texte
-                    alert('Veuillez remplir tous les champs.');
-                    valid = false;
                 }
             });
 
@@ -241,14 +229,14 @@
         function updateDureeStage() {
             const typeStage = document.getElementById("idTypestage").value;
             const dureestageSelect = document.getElementById("dureestage");
-            dureestageSelect.options.length = 0; // Supprimer toutes les options existantes
+            dureestageSelect.innerHTML = ''; // Vider les options existantes
 
-            if (typeStage === "1") { // Stage de validation de Diplôme
+            if (typeStage === "1") {
                 dureestageSelect.add(new Option("3 mois", "3"));
-                dureestageSelect.value = "3"; // Définir la valeur par défaut à 3 mois
-            } else if (typeStage === "2") { // Stage de Perfectionnement
+                dureestageSelect.value = "3";
+            } else if (typeStage === "2") {
                 dureestageSelect.add(new Option("6 mois", "6"));
-                dureestageSelect.value = "6"; // Définir la valeur par défaut à 6 mois
+                dureestageSelect.value = "6";
             }
         }
 
@@ -261,18 +249,18 @@
             }
         }
 
-        function prevStep() {
-            if (currentStep > 1) {
-                currentStep--;
-                showStep(currentStep);
-            }
-        }
-
-        // Initialize the first step
+function prevStep() {
+    if (currentStep > 1) {
+        currentStep--;
         showStep(currentStep);
+    }
+}
 
-        // Update the duration field when the type of stage is selected
-        document.getElementById("idTypestage").addEventListener("change", updateDureeStage);
+// Initialiser la première étape
+document.addEventListener('DOMContentLoaded', () => {
+    showStep(currentStep);
+    document.getElementById("idTypestage").addEventListener("change", updateDureeStage);
+});
     </script>
 
 </body>
