@@ -163,18 +163,17 @@ body {
     background: #F3F4F6; /* Gris très clair pour l'état de survol */
 }
 .formbold-btn {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 16px;
-    border-radius: 5px;
-    padding: 10px 25px;
-    border: none;
-    font-weight: 500;
-    background-color: #F6AD55; /* Orange pour les boutons principaux */
+    display: inline-block;
+    background-color: #4CAF50; /* Exemple de couleur pour le bouton */
     color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
     cursor: pointer;
-    transition: background .3s ease;
 }
 .formbold-btn:hover {
     background-color: #DD6B20; /* Orange plus foncé pour l'état de survol */
